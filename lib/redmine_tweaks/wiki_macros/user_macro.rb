@@ -27,9 +27,9 @@ module RedmineTweaks
         raise 'The correct usage is {{user(<user_id or username>, format=USER_FORMAT)}}' if args.empty?
         user_id = args[0]
 
-        user = User.find_by_id(user_id)
-        user ||= User.find_by_login(user_id)
-        return 'N/A' if user.nil?
+        user = User.find_by(id: user_id)
+        user ||= User.find_by(login: user_id)
+        return l(:label_macro_na) if user.nil?
 
         name = if options[:format].blank?
                  user.name
@@ -37,18 +37,17 @@ module RedmineTweaks
                  user.name(options[:format].to_sym)
                end
 
-        s = ''
+        s = []
         if !options[:avatar].blank? && options[:avatar]
-          s = avatar(user, size: 14)
+          s << avatar(user, size: 14) + ' '
         end
 
-        s.html_safe << if user.active?
-                         link_to(h(name),
-                                 user_path(user),
-                                 class: user.css_classes)
-                       else
-                         h(name)
-                       end
+        s << if user.active?
+               link_to(h(name), user_path(user), class: user.css_classes)
+             else
+               h(name)
+             end
+        safe_join(s)
       end
     end
   end
