@@ -6,6 +6,7 @@ if ActiveRecord::Base.connection.table_exists?(:settings)
     # Patches
     require_dependency 'redmine_tweaks/patches/custom_help_url'
     require_dependency 'redmine_tweaks/patches/issue_patch'
+    require_dependency 'redmine_tweaks/patches/time_entry_patch'
     require_dependency 'redmine_tweaks/patches/wiki_patch'
     require_dependency 'redmine_tweaks/patches/wiki_controller_patch'
 
@@ -30,6 +31,12 @@ if ActiveRecord::Base.connection.table_exists?(:settings)
     require_dependency 'redmine_tweaks/wiki_macros/user_macro'
     require_dependency 'redmine_tweaks/wiki_macros/vimeo'
     require_dependency 'redmine_tweaks/wiki_macros/youtube'
+
+    module RedmineTweaks
+      def self.settings
+        Setting[:plugin_redmine_tweaks].blank? ? {} : Setting[:plugin_redmine_tweaks]
+      end
+    end
 
     unless RedmineTweaks.settings[:remove_help]
       Redmine::Plugin.find('redmine_tweaks')
